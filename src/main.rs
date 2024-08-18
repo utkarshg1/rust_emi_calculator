@@ -1,30 +1,39 @@
 use std::io;
+
 fn main() {
-    let p: f64 = get_input("Enter Principal in INR : ");
-    let n: f64 = get_input("Enter Period in Years : ");
-    let r: f64 = get_input("Enter Rate of Intrest in %p.a. : ");
-    let results: (f64, f64, f64) = emi_calculator(p, n, r);
-    println!("EMI Calculated : {} INR", results.0);
-    println!("Intrest : {} INR", results.1);
-    println!("Amount : {} INR", results.2);
+    let p = get_input("Enter Principal in INR");
+    let n = get_input("Enter Period in Years");
+    let r = get_input("Enter Rate of Interest in % p.a.");
+
+    let (emi, interest, total_amount) = emi_calculator(p, n, r);
+
+    println!("EMI Calculated: {:.2} INR", emi);
+    println!("Interest: {:.2} INR", interest);
+    println!("Total Amount: {:.2} INR", total_amount);
 }
 
-fn emi_calculator(p: f64, n: f64, r: f64) -> (f64, f64, f64) {
-    let n1: f64 = n * 12.0;
-    let r1: f64 = r / 1200.0;
-    let x: f64 = (1.0 + r1).powf(n1);
-    let emi: f64 = p * r1 * x / (x - 1.0);
-    let amt: f64 = emi * n1;
-    let intr: f64 = amt - p;
-    return (emi.round(), intr.round(), amt.round());
+fn emi_calculator(principal: f64, years: f64, annual_rate: f64) -> (f64, f64, f64) {
+    let months = years * 12.0;
+    let monthly_rate = annual_rate / 1200.0;
+    let factor = (1.0 + monthly_rate).powf(months);
+    let emi = principal * monthly_rate * factor / (factor - 1.0);
+    let total_amount = emi * months;
+    let interest = total_amount - principal;
+
+    (emi, interest, total_amount)
 }
 
 fn get_input(prompt: &str) -> f64 {
-    let mut input = String::new();
-    println!("{prompt} : ");
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
-    let output: f64 = input.trim().parse().expect("Please enter valid number");
-    output
+    loop {
+        let mut input = String::new();
+        println!("{prompt}: ");
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read input");
+
+        match input.trim().parse::<f64>() {
+            Ok(value) => break value,
+            Err(_) => println!("Please enter a valid number."),
+        }
+    }
 }
