@@ -10,6 +10,12 @@ fn main() {
     println!("EMI Calculated: {:.2} INR", emi);
     println!("Interest: {:.2} INR", interest);
     println!("Total Amount: {:.2} INR", total_amount);
+
+    println!("Press Enter to exit...");
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
 }
 
 fn emi_calculator(principal: f64, years: f64, annual_rate: f64) -> (f64, f64, f64) {
